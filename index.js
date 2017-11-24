@@ -43,34 +43,39 @@ app.use(bodyParser.json());
 app.use(logger.dev());
 
 app.post('/users', validateTrigger('beforeSave', 'User'), function(req, res) {
-  const applicationKey = virgil.crypto.importPrivateKey(
-    process.env.APP_KEY,
-    process.env.APP_KEY_PASSWORD
-  );
+  try {
+    const applicationKey = virgil.crypto.importPrivateKey(
+      process.env.APP_KEY,
+      process.env.APP_KEY_PASSWORD
+    );
 
-  const user = req.body.object;
-  const cardRequest = virgil.publishCardRequest.import(user.csr);
-  const signer = virgil.requestSigner(virgil.crypto);
-  signer.authoritySign(process.env.APP_ID, applicationKey);
+    const user = req.body.object;
+    const cardRequest = virgil.publishCardRequest.import(user.csr);
+    const signer = virgil.requestSigner(virgil.crypto);
+    signer.authoritySign(process.env.APP_ID, applicationKey);
 
-  const client = virgil.client(
-    process.env.VIRGIL_ACCESS_TOKEN,
-    {
-      cardsBaseUrl: process.env.VIRGIL_CARDS_URL
-    }
-  );
+    const client = virgil.client(
+      process.env.VIRGIL_ACCESS_TOKEN,
+      {
+        cardsBaseUrl: process.env.VIRGIL_CARDS_URL
+      }
+    );
 
-  client.publishCard(cardRequest)
-    .then(card => {
-      user.virgilCardId = card.id;
-      delete user.csr;
+    client.publishCard(cardRequest)
+      .then(card => {
+        user.virgilCardId = card.id;
+        delete user.csr;
 
-      successResponse(res, user);
-    })
-    .catch(e => {
-      console.error('Failed to publish Virgil Card', e);
-      errorResponse(res, 'Could not create Virgil Card');
-    });
+        successResponse(res, user);
+      })
+      .catch(e => {
+        console.error('Failed to publish Virgil Card', e);
+        errorResponse(res, 'Could not create Virgil Card');
+      });
+  } catch (e) {
+    console.error(e);
+    next(e);
+  }
 });
 
 app.use(function (err, req, res, next) {
