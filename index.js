@@ -40,7 +40,7 @@ const app = express();
 
 app.use(validateWebhookRequest);
 app.use(bodyParser.json());
-app.use(logger.dev());
+app.use(logger('dev'));
 
 app.post('/users', validateTrigger('beforeSave', 'User'), function(req, res) {
   try {
