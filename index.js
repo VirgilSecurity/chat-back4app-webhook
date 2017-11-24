@@ -8,9 +8,10 @@ const virgil = require('virgil-sdk');
 const webhookKey = process.env.WEBHOOK_KEY;
 
 function validateWebhookRequest(req, res, next) {
-  if (req.get('X-Parse-Webhook-Key') !== webhookKey) {
-    return errorResponse(res, 'Unauthorized Request.');
-  }
+  console.log(`REQUEST HEADERS: ${req.headers}`);
+  // if (req.get('X-Parse-Webhook-Key') !== webhookKey) {
+  //   return errorResponse(res, 'Unauthorized Request.');
+  // }
 
   next();
 }
