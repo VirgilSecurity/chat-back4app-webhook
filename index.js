@@ -8,7 +8,7 @@ const virgil = require('virgil-sdk');
 const webhookKey = process.env.WEBHOOK_KEY;
 
 function validateWebhookRequest(req, res, next) {
-  console.log(`REQUEST HEADERS: ${req.headers}`);
+  console.log(`REQUEST HEADERS: ${JSON.stringify(req.headers)}`);
   // if (req.get('X-Parse-Webhook-Key') !== webhookKey) {
   //   return errorResponse(res, 'Unauthorized Request.');
   // }
@@ -43,7 +43,7 @@ app.use(validateWebhookRequest);
 app.use(bodyParser.json());
 app.use(logger('dev'));
 
-app.post('/users', validateTrigger('beforeSave', 'User'), function(req, res) {
+app.post('/users', validateTrigger('beforeSave', '_User'), function(req, res) {
   try {
     const applicationKey = virgil.crypto.importPrivateKey(
       process.env.APP_KEY,
