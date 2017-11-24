@@ -53,7 +53,7 @@ app.post('/users', validateTrigger('beforeSave', '_User'), function(req, res) {
     const user = req.body.object;
     const cardRequest = virgil.publishCardRequest.import(user.csr);
     const signer = virgil.requestSigner(virgil.crypto);
-    signer.authoritySign(request, process.env.APP_ID, applicationKey);
+    signer.authoritySign(cardRequest, process.env.APP_ID, applicationKey);
 
     const client = virgil.client(
       process.env.VIRGIL_ACCESS_TOKEN,
