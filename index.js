@@ -1,6 +1,5 @@
 require('dotenv').config();
 
-const express = require('express');
 const bodyParser = require('body-parser');
 const logger = require('morgan');
 const virgil = require('virgil-sdk');
@@ -37,8 +36,7 @@ function errorResponse(res, message) {
   res.status(200).send({ 'error' : message });
 }
 
-const app = express();
-
+app.disable('x-powered-by');
 app.use(validateWebhookRequest);
 app.use(bodyParser.json());
 app.use(logger('dev'));
