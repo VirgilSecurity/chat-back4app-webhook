@@ -51,6 +51,10 @@ app.post('/users', validateTrigger('beforeSave', '_User'), function(req, res) {
       process.env.APP_KEY_PASSWORD
     );
 
+    if (!user.csr) {
+      return errorResponse(res, 'Property "csr" is missing from request.');
+    }
+
     const user = req.body.object;
     const cardRequest = virgil.publishCardRequest.import(user.csr);
     const signer = virgil.requestSigner(virgil.crypto);
