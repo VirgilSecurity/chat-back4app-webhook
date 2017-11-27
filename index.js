@@ -80,6 +80,10 @@ app.post('/users', validateTrigger('beforeSave', '_User'), function(req, res) {
   }
 });
 
+app.use(function (req, res, next) {
+  res.status(404).end('{ "error": "Not Found." }');
+});
+
 app.use(function (err, req, res, next) {
   res.status(err.status || 500);
   res.end('{ "error": "Request Failed."}');
