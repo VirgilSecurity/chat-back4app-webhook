@@ -1,5 +1,4 @@
 FROM node:6-alpine
-USER guest
 ARG git_commit
 RUN apk add --no-cache --update ca-certificates
 
@@ -18,4 +17,5 @@ ENV GIT_COMMIT $git_commit
 
 EXPOSE 3000
 
+USER guest
 CMD [ "npm", "start" ]
