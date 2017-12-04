@@ -7,6 +7,7 @@ app users on Virgil Cards Service.
 ## Get started
 
 ### Configure
+
 The following environment variables must be set:
 
 | Variable name | Description |
