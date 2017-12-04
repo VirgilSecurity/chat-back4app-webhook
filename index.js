@@ -4,6 +4,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const logger = require('morgan');
 const virgil = require('virgil-sdk');
+const package = require('./package.json');
 
 const webhookKey = process.env.WEBHOOK_KEY;
 
@@ -37,11 +38,15 @@ function errorResponse(res, message) {
 }
 
 const app = express();
-
 app.disable('x-powered-by');
+
+app.get('/health/status', (req, res) => {
+  res.status(200).send();
+})
+
 app.use(validateWebhookRequest);
 app.use(bodyParser.json());
-app.use(logger('dev'));
+app.use(logger('combined'));
 
 app.post('/users', validateTrigger('beforeSave', '_User'), function(req, res) {
   try {
@@ -94,6 +99,9 @@ app.use(function (err, req, res, next) {
 });
 
 const port = process.env.PORT || 443;
+const gitCommit = process.env.GIT_COMMIT || 'latest';
 app.listen(port, function() {
-  console.log('Webhooks server listening on port ' + port);
+  console.log(
+    `${package.name} v${package.version} (@${gitCommit}) listening on ${port}`
+  );
 });
