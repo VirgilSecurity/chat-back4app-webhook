@@ -1,4 +1,5 @@
 FROM node:6-alpine
+USER guest
 ARG git_commit
 RUN apk add --no-cache --update ca-certificates
 
