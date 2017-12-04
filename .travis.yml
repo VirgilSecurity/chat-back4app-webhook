@@ -21,8 +21,3 @@ script:
 after_success:
   - make docker_inspect
   - make docker_registry_push
-
-branches:
-  only:
-  - master
-  - /^v\d+\.\d+(\.\d+)?(-\S*)?$/
