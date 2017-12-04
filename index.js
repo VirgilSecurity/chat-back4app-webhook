@@ -65,12 +65,7 @@ app.post('/users', validateTrigger('beforeSave', '_User'), function(req, res) {
     const signer = virgil.requestSigner(virgil.crypto);
     signer.authoritySign(cardRequest, process.env.APP_ID, applicationKey);
 
-    const client = virgil.client(
-      process.env.VIRGIL_ACCESS_TOKEN,
-      {
-        cardsBaseUrl: process.env.VIRGIL_CARDS_URL
-      }
-    );
+    const client = virgil.client(process.env.VIRGIL_ACCESS_TOKEN);
 
     client.publishCard(cardRequest)
       .then(card => {
