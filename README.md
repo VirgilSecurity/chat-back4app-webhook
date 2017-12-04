@@ -8,6 +8,7 @@ app users on Virgil Cards Service.
 
 ### Configure
 The following environment variables must be set:
+
 | Variable name | Description |
 | --- | --- |
 | APP_ID | Id of your app from [Virgil Dashboard](https://developer.virgilsecurity.com/account/dashboard/) |
