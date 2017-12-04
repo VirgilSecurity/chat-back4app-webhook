@@ -2,25 +2,23 @@
 docker: build_docker
 
 IMAGENAME=virgil-demo-b4a-server
-DOCKER_REGISTRY=virgilsecurity-docker-core.bintray.io
+DOCKER_REGISTRY=virgilsecurity
 
 define tag_docker
-  @if [ "$(GIT_BRANCH)" = "master" ]; then \
-    docker tag $(IMAGENAME) $(DOCKER_REGISTRY)/services/$(IMAGENAME):latest; \
-		docker tag $(IMAGENAME) $(DOCKER_REGISTRY)/services/$(IMAGENAME):$(GIT_COMMIT); \
+  @if [ "$(GIT_TAG)" != "" ]; then \
+	  docker tag $(IMAGENAME) $(DOCKER_REGISTRY)/$(IMAGENAME):$(GIT_TAG); \
+	  docker tag $(IMAGENAME) $(DOCKER_REGISTRY)/$(IMAGENAME):latest; \
   else \
-  	docker tag $(IMAGENAME) $(DOCKER_REGISTRY)/services-dev/$(IMAGENAME):latest; \
-    docker tag $(IMAGENAME) $(DOCKER_REGISTRY)/services-dev/$(IMAGENAME):$(GIT_COMMIT); \
+    docker tag $(IMAGENAME) $(DOCKER_REGISTRY)/$(IMAGENAME):$(GIT_BRANCH); \
   fi
 endef
 
 define push_docker
-  @if [ "$(GIT_BRANCH)" = "master" ]; then \
-    docker push $(DOCKER_REGISTRY)/services/$(IMAGENAME):latest; \
-		docker push $(DOCKER_REGISTRY)/services/$(IMAGENAME):$(GIT_COMMIT); \
+  @if [ "$(GIT_TAG)" != "" ]; then \
+		docker tag $(IMAGENAME) $(DOCKER_REGISTRY)/$(IMAGENAME):latest; \
+    docker push $(DOCKER_REGISTRY)/$(IMAGENAME):$(GIT_TAG); \
   else \
-  	docker push $(DOCKER_REGISTRY)/services-dev/$(IMAGENAME):latest; \
-    docker push $(DOCKER_REGISTRY)/services-dev/$(IMAGENAME):$(GIT_COMMIT); \
+    docker push $(DOCKER_REGISTRY)/$(IMAGENAME):$(GIT_BRANCH); \
   fi
 endef
 
@@ -36,13 +34,3 @@ docker_registry_push:
 docker_inspect:
 	docker inspect -f '{{index .ContainerConfig.Labels "git-commit"}}' $(IMAGENAME)
 	docker inspect -f '{{index .ContainerConfig.Labels "git-branch"}}' $(IMAGENAME)
-
-clean_docker_registry:
-	@echo ">>> Cleaning Bintray registry"
-	docker run --rm -e "REGISTRY_USERNAME=${REGISTRY_USERNAME}" -e "REGISTRY_PASSWORD=${REGISTRY_PASSWORD}" \
-	virgilsecurity-docker-core.bintray.io/utils/bintraymgr:latest \
-	clean -t 10 core services-dev/$(IMAGENAME)
-
-	docker run --rm -e "REGISTRY_USERNAME=${REGISTRY_USERNAME}" -e "REGISTRY_PASSWORD=${REGISTRY_PASSWORD}" \
-	virgilsecurity-docker-core.bintray.io/utils/bintraymgr:latest \
-	clean -t 10 core services/$(IMAGENAME)
