@@ -1,5 +1,4 @@
 FROM node:6-alpine
-MAINTAINER Virgil <support@VirgilSecurity.com>
 ARG git_commit
 RUN apk add --no-cache --update ca-certificates
 

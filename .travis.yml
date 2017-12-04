@@ -9,7 +9,7 @@ env:
     - GIT_BRANCH=$TRAVIS_BRANCH
 
 before_install:
-  - docker login -u $REGISTRY_USERNAME -p $REGISTRY_PASSWORD virgilsecurity-docker-core.bintray.io
+  - docker login -u $REGISTRY_USERNAME -p $REGISTRY_PASSWORD
 
 install:
   - echo $GIT_COMMIT $GIT_BRANCH
