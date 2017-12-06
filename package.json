@@ -12,6 +12,7 @@
   },
   "author": "",
   "license": "BSD-3-Clause",
+  "repository": "https://github.com/VirgilSecurity/chat-back4app-webhook",
   "dependencies": {
     "body-parser": "^1.18.2",
     "dotenv": "^4.0.0",
