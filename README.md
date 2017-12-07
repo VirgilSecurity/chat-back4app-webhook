@@ -1,7 +1,7 @@
-# Virgil Demo Chat Back4App
+# Back4App + Virgil Security Demo Chat 
 
-Express app used as a [beforeSave Webhook](http://docs.parseplatform.org/cloudcode/guide/#beforesave-webhooks)
-for Back4App-powered Chat demo application. The purpose of this webhook is to publish Virgil Cards of the
+A module used to generate [beforeSave Trigger](http://docs.parseplatform.org/cloudcode/guide/#beforesave-triggers)
+for Back4App-powered Chat demo application. The purpose of this trigger is to publish Virgil Cards of the
 app users on Virgil Cards Service.
 
 ## Get started
@@ -14,68 +14,65 @@ To use this project you will need:
 * An _app_ in your Virgil Dashboard account. Make sure you have the _private key_ of this app.
 * An account at [Back4App Dashboard](https://dashboard.back4app.com/).
 * An app in your Back4App Dashboard account.
+* Although not required, you may want to install the [Back4App CLI](https://docs.back4app.com/docs/integrations/command-line-interface/setting-up-cloud-code/) 
+to facilitate Cloud Code deploy
 
 ### Configure
 
-This project reads configuration parameters (such as app's private key) from environment at runtime.
-The following environment variables are required for this project to work:
+Clone this repository
+
+```bash
+git clone https://github.com/VirgilSecurity/chat-back4app-webhook.git
+```
+
+Go to the project folder
+
+```bash
+cd chat-back4app-webhook
+```
+
+This project reads configuration parameters (such as app's private key) from `config.json` file in a root folder.
+The following parameters are required for the trigger to work:
 
 | Variable name | Description |
 | --- | --- |
-| APP_ID | Id of your app from [Virgil Dashboard](https://developer.virgilsecurity.com/account/dashboard/) |
-| APP_KEY | Your app's private key as base64-encoded string |
-| APP_KEY_PASSWORD | Password used to protect the app's private key |
-| VIRGIL_ACCESS_TOKEN | Your app's access token for Virgil Services |
-| WEBHOOK_KEY | The Webhook Key from your app's settings on [Back4App Dashboard](https://dashboard.back4app.com/) |
+| VIRGIL_APP_ID | Id of your app from [Virgil Dashboard](https://developer.virgilsecurity.com/account/dashboard/) |
+| VIRGIL_APP_PRIVATE_KEY | Your app's private key as base64-encoded string |
+| VRIGIL_APP_PRIVATE_KEY_PASSWORD | Password used to protect the app's private key |
+| VIRGIL_APP_ACCESS_TOKEN | Your app's access token for Virgil Services |
 
-This project uses [dotenv](https://github.com/motdotla/dotenv) module to load variables from `.env` file into
-`process.env`. To setup locally, copy the `.env.example` file in the root project folder, save it under name `.env`
-and fill it in with your app's specific values. Please note, the `.env` file is included in `.gitignore`
+To setup locally, copy the `config.example.json` file in the root project folder, save it under name `config.json`
+and fill it in with your app's specific values. Please note, the `config.json` file is included in `.gitignore`
 because it contains sensitive information and must not be committed into the repo.
 
 ```bash
-cp .env.example .env
+cp config.example.json config.json
 ```
 
-### Install dependencies
-
+> Hint. You can get your Virgil App's private key from a file into base64-encoded string by performing the following command in the terminal (Unix): 
 ```bash
-npm install
+cat ~/Downloads/<your_app_name>.virgilkey | base64
+```
+> Or on Windows:
+```bash
+certutil -encode <your_app_name>.virgilkey tmp.b64 && findstr /v /c:- tmp.b64 > app_private_key.txt
+# copy the contents of app_private_key.txt manually
 ```
 
-### Run
+### Generate the Cloud Code Trigger
 
 ```bash
-npm start
+npm run generate
 ```
 
 ## Deploy
 
-This Webhook must be hosted in its own environment, separate from the Back4App server.
-Following is an example of how to deploy this app at [Heroku](https://www.heroku.com/) using
-[Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli).
+If you have [Back4App CLI](https://docs.back4app.com/docs/integrations/command-line-interface/) installed on your 
+system, follow the instructions on how to [set up Cloud Code](https://docs.back4app.com/docs/integrations/command-line-interface/setting-up-cloud-code-2/) 
+for you app. Then run:
 
-Cloud Code Webhooks requires an HTTPS connection, and so a valid SSL certificate is required. Heroku will handle this for you.
-
-Log into Heroku:
 ```bash
-heroku login
+b4a deploy
 ```
 
-Create a new app:
-```bash
-heroku create
-```
-
-Add your config to the Heroku app:
-```bash
-heroku config:set APP_ID=your_app_id APP_KEY=your_app_key APP_KEY_PASSWORD=your_app_key_password VIRGIL_ACCESS_TOKEN=your_access_token WEBHOOK_KEY=your_webhook_key
-```
-
-Deploy to Heroku:
-```bash
-// This is pushing the local master branch to the remote master branch
-git push heroku master
-```
-
-Now, use the URL of your Heroku app to set up your Webhooks in the Back4App app dashboard.
+That's it! Now you can create Virgil Cards for your users.

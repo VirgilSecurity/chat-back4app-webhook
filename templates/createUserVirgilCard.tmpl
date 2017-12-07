@@ -1,0 +1,56 @@
+Parse.Cloud.beforeSave(Parse.User, function(request, response) {
+	const virgil = require('virgil-sdk');
+
+	const appKey = resolveAppKey();
+	if (!appKey) {
+		return response.error('App private key or its password is invalid');
+	}
+
+	const user = request.object;
+	if (!user.get('csr')) {
+		return response.error('Property "csr" is missing from request.');
+	}
+
+	const cardRequest = resolveCardRequest(user.get('csr'));
+	if (!cardRequest) {
+		return response.error('Virgil card request format is invalid.');
+	}
+
+	signCardRequest(cardRequest);
+	const client = virgil.client({{VIRGIL_APP_ACCESS_TOKEN}});
+	client.publishCard(cardRequest)
+		.then(function (card) {
+			user.set('virgilCardId', card.id);
+			user.set('csr', undefined);
+
+			response.success();
+		})
+		.catch(function (err) {
+			console.error('Failed to publish Virgil Card', err);
+			response.error('Could not create Virgil Card');
+		});
+
+	function resolveAppKey() {
+		try {
+			return virgil.crypto.importPrivateKey(
+				{{VIRGIL_APP_PRIVATE_KEY}},
+				{{VIRGIL_APP_PRIVATE_KEY_PASSWORD}}
+			);
+		} catch (e) {
+			return null;
+		}
+	}
+
+	function resolveCardRequest(csr) {
+		try {
+			return virgil.publishCardRequest.import(csr);
+		} catch (e) {
+			return null;
+		}
+	}
+
+	function signCardRequest(cardRequest) {
+		const signer = virgil.requestSigner(virgil.crypto);
+		signer.authoritySign(cardRequest, {{VIRGIL_APP_ID}}, appKey);
+	}
+});

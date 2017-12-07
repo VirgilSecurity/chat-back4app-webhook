@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "virgil-sdk": "^4.5.1"
+  }
+}
