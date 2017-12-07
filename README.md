@@ -75,4 +75,8 @@ for you app. Then run:
 b4a deploy
 ```
 
+If you don't have the CLI, you can upload the contents of the `cloud` folder in your [Back4App Dashboard](https://dashboard.back4app.com) Cloud Code settings. 
+
+![Cloud Code Settings](https://i.imgur.com/Xbb9Z0u.png)
+
 That's it! Now you can create Virgil Cards for your users.
